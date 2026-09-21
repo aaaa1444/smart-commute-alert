@@ -68,6 +68,12 @@ air_data = air_response.json()
 
 aqi_values = air_data["hourly"]["us_aqi"]
 
+# 移除 API 回傳的空值 None
+aqi_values = [value for value in aqi_values if value is not None]
+
+if not aqi_values:
+    raise ValueError("AQI API 沒有回傳有效的 AQI 資料")
+
 aqi = max(aqi_values)
 
 
@@ -85,7 +91,6 @@ if max_temperature >= 33:
 
 if aqi >= 100:
     recommendations.append("😷 AQI 達 100，建議配戴口罩。")
-
 
 if not recommendations:
     recommendations.append("✅ 今日天氣與空氣品質正常，適合外出通勤。")
@@ -128,3 +133,4 @@ telegram_response = requests.post(
 telegram_response.raise_for_status()
 
 print("Telegram 通知發送成功！")
+print(message)
